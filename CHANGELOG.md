@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.1](https://github.com/Carrera-Dev-Consulting/kryptic-cypher/tree/0.1.1) (2024-11-23)
+
+[Full Changelog](https://github.com/Carrera-Dev-Consulting/kryptic-cypher/compare/0.1.0...0.1.1)
+
+**Merged pull requests:**
+
+- chore: Update the project description in the pyproject.toml [\#3](https://github.com/Carrera-Dev-Consulting/kryptic-cypher/pull/3) ([gxldCptRick](https://github.com/gxldCptRick))
+- chore\(changelog\): Updating Changelog for version 0.1.0 [\#2](https://github.com/Carrera-Dev-Consulting/kryptic-cypher/pull/2) ([github-actions[bot]](https://github.com/apps/github-actions))
+
 ## [0.1.0](https://github.com/Carrera-Dev-Consulting/kryptic-cypher/tree/0.1.0) (2024-11-23)
 
 [Full Changelog](https://github.com/Carrera-Dev-Consulting/kryptic-cypher/compare/639ad93f365698fa2c6a949adace2693b4a5f3d6...0.1.0)
