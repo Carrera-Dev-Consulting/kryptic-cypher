@@ -16,7 +16,7 @@ Please note we have a code of conduct, please follow it in all your interactions
 
 ## Code of Conduct
 
-Please refer to our [Code of Conduct here](https://github.com/Carrera-Dev-Consulting/zombie_nomnom/blob/main/CODE_OF_CONDUCT.md)
+Please refer to our [Code of Conduct here](https://github.com/Carrera-Dev-Consulting/kryptic-cypher/blob/main/CODE_OF_CONDUCT.md)
 
 ### Our Pledge
 

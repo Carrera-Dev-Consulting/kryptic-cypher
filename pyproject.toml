@@ -4,7 +4,7 @@ build-backend = "pdm.backend"
 
 
 [project]
-name = "zombie_nomnom"
+name = "kryptic_cypher"
 dynamic = ["version"]
 description = "A Zombie Dice Game Engine Library and Executable"
 readme = "README.md"
@@ -30,20 +30,20 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 
-keywords = ["game", "engine", "dice"]
+keywords = ["encyrption", "cli",]
 
 dependencies = ["pydantic>=2.9.2", "click>=8.1.7"]
 
 [project.urls]
-Homepage = "https://github.com/carrera-dev-consulting/zombie_nomnom"
-Documentation = "https://consulting.gxldcptrick.dev/zombie_nomnom/docs"
-Repository = "https://github.com/carrera-dev-consulting/zombie_nomnom"
-Issues = "https://github.com/carrera-dev-consulting/zombie_nomnom/issues"
-Changelog = "https://github.com/carrera-dev-consulting/zombie_nomnom/releases"
+Homepage = "https://github.com/carrera-dev-consulting/kryptic-cypher"
+Documentation = "https://consulting.gxldcptrick.dev/kryptic-cypher"
+Repository = "https://github.com/carrera-dev-consulting/kryptic-cypher"
+Issues = "https://github.com/carrera-dev-consulting/kryptic-cypher/issues"
+Changelog = "https://github.com/carrera-dev-consulting/kryptic-cypher/releases"
 
 [project.scripts]
-zombie-nomnom = "zombie_nomnom.app:main"
+kryptic-cypher = "kryptic_cypher.app:main"
 
 [tool.pdm]
-version = { source = "scm", tag_regex = "^(\\d+\\.){2}\\d+$" }
+version = { source = "scm", tag_regex = "^(\\d+\\.){2}\\d+$", fallback_version = "0.0.0" }
 distribution = true

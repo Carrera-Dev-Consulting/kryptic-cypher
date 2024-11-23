@@ -2,17 +2,17 @@
 cli:
   - all:
       - changed-files:
-          - any-glob-to-any-file: "zombie_nomnom/cli.py"
+          - any-glob-to-any-file: "kryptic-cypher/cli.py"
 # whenever we make changes to the core lib we tag it
 core:
   - all:
       - changed-files:
-          - any-glob-to-any-file: "zombie_nomnom/**"
+          - any-glob-to-any-file: "kryptic-cypher/**"
 # Changes to the api and api related files
 api:
   - all:
       - changed-files:
-          - any-glob-to-any-file: "zombie_nomnom/api/**"
+          - any-glob-to-any-file: "kryptic-cypher/api/**"
 # Whenever we updated any of the tests
 tests:
   - all:
