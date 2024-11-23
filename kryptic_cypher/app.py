@@ -1,8 +1,7 @@
 """
 Module that contains the click entrypoint for our cli interface.
 
-Currently this only contains code to run the game form the cli but this will be extended 
-to also run this as a web app including a built in server with react spa app.
+This is currently only for encoding and decoding data using the encode and decode commands. 
 """
 
 import base64
