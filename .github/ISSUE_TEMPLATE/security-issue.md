@@ -9,7 +9,7 @@ assignees: ''
 
 # Vulnerability Report
 
-I identified potential security vulnerabilities in zombie_nomnom.
+I identified potential security vulnerabilities in kryptic-cypher.
 
 I am committed to working with you to help resolve these issues. In this report you will find everything you need to effectively coordinate a resolution of these issues.
 
@@ -23,7 +23,7 @@ If you are _NOT_ the correct point of contact for this report, please let me kno
 
 ## Product
 
-zombie_nomnom
+kryptic-cypher
 
 ## Tested Version
 
