@@ -9,9 +9,9 @@ from kryptic_cypher.cypher import register_cypher, Cypher, CypherWithKey
 @register_cypher
 class MyCypher(Cypher):
     def encode(self, text: str) -> str:
-        # Do my encryption here 
+        # Do my encryption here
         return text
-        
+
     def decode(self, text: str) -> str:
         # Do my decryption here
         return text
@@ -20,9 +20,9 @@ class MyCypher(Cypher):
 @register_cypher
 class MyCypherWithKey(CypherWithKey):
     def encode(self, text: str, key: str) -> str:
-        # Do my encryption here 
+        # Do my encryption here
         return text
-        
+
     def decode(self, text: str, key: str) -> str:
         # Do my decryption here
         return text
@@ -33,4 +33,4 @@ You can use this if you want to import and leverage any existing cyphers that ha
 If you would like to explore the existing cyphers you can find them as submodules for the `kryptic_cypher.cypher` module.
 """
 
-from .base import register_cypher, Cypher, CypherWithKey, registered_cyphers
+from .base import *

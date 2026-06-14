@@ -1,50 +1,43 @@
-from kryptic_cypher.cypher.base import CypherWithKey, ValidationResult
+import string
+
+from kryptic_cypher.cypher.base import CypherResult, CypherWithKey, ValidationResult
+
+characters = {
+    "A": 0,
+    "B": 1,
+    "C": 2,
+    "D": 3,
+    "E": 4,
+    "F": 5,
+    "G": 6,
+    "H": 7,
+    "I": 8,
+    "J": 8,
+    "K": 9,
+    "L": 10,
+    "M": 11,
+    "N": 12,
+    "O": 13,
+    "P": 14,
+    "Q": 15,
+    "R": 16,
+    "S": 17,
+    "T": 18,
+    "U": 19,
+    "V": 19,
+    "W": 20,
+    "X": 21,
+    "Y": 22,
+    "Z": 23,
+}
 
 
-def encode_letter(letter: str) -> str:
-    """Takes letter and returns a 5 bit value as a string pattern based on the bacon table.
-
-    **Parameters**
-    - letter (str): The letter to encode
-
-    **Returns**
-    - str: The binary pattern
-    """
-    upper = letter.upper()
-    if not upper.isalpha():
-        return upper
-
-
-def encode_pattern(pattern: str, key: str) -> str:
-    """Takes in the pattern for the full string i.e. 01101 010010 10011 01011, and key i.e. keys and returns a string where it repeats the key matching the casing that it sees.
-
-    **Parameters**
-    - pattern (str): The binary string pattern that will be the encoded message
-    - key (str): The string the binary pattern will be applied to.
-
-    **Returns**
-    - str: Encoded message
-    """
-    """Example:
-        '10010 10101 3 10101 101010!', 'key'
-        '100 101 010 1 3 10 101 101 010!'
-        'Key KeY kEy K 3 Ey KeY KeY kEy!'
-    """
-    partial = ""
-    aggregates = []
-    for i in pattern:
-        if i in "01":
-            if partial:
-                pass
-            partial += i
-            if partial == len(key):
-                aggregates.append(partial)
-                partial = ""
-        else:
-            aggregates.append(partial)
-            partial = ""
-
-    return key
+def sanitize_message(message: str) -> str:
+    new_message = ""
+    for letter in message.upper():
+        if letter.isascii():
+            new_message += letter
+    return new_message
 
 
 class BaconsCypher(CypherWithKey):
@@ -79,7 +72,7 @@ class BaconsCypher(CypherWithKey):
     |    W   | 10100 |     20     |
     |    X   | 10101 |     21     |
     |    Y   | 10110 |     22     |
-    |    Z   | 10111 |     24     |
+    |    Z   | 10111 |     23     |
 
     **Examples**
 
@@ -88,11 +81,94 @@ class BaconsCypher(CypherWithKey):
     'Hello World', 'supercoolkeythatwillbeawesome' -> '00111 00100 01010 01010 01101 10100 01101 10000 01010 00011' -> ''
     """
 
-    def validate_key(self, key: str) -> ValidationResult:
-        pass
+    @staticmethod
+    def get_name() -> str:
+        return "bacons"
 
-    def encode(self, text: str) -> str:
-        pass
+    def validate_key(self, key: str) -> ValidationResult:
+        if len(key) < 2:
+            return ValidationResult.fail("Key must be at least 2 characters long")
+        return ValidationResult.ok()
+
+    def encode(self, text: str, key: str) -> str:
+        # Remove unsupported characters
+        sanitized = sanitize_message(text)
+
+        # Is there anything to encode?
+        if len(sanitized) == 0:
+            return CypherResult.fail(sanitized, "Message cannot be empty.")
+
+        key_index = 0
+        encoded = ""
+
+        # Encode each character
+        for character in sanitized:
+            value = characters[character]
+
+            # Turn the value into a 5 bit string
+            for c in f"{value:05b}":
+
+                # Check to see if we've reached the end of the key
+                if key_index >= len(key):
+                    key_index = 0
+                    encoded += " "
+
+                # Get the character from the key
+                visual = key[key_index]
+                key_index += 1
+
+                # Determine casing
+                if c == "1":
+                    encoded += visual.upper()
+                else:
+                    encoded += visual.lower()
+
+        return CypherResult.ok(
+            sanitized,
+            encoded,
+        )
 
     def decode(self, text: str, key: str) -> str:
-        pass|
+        pieces = text.split(" ")
+
+        # Check to make sure the text is encoded with the given key
+        if any(piece.lower() != key.lower() for piece in pieces):
+            return CypherResult.fail(
+                text,
+                "Text is not encoded with the given key, cannot trust the decoded text.",
+            )
+        joined = "".join(pieces)
+
+        # Check that the text is a multiple of 5 since we encode 5 bits at a time
+        if len(joined) % 5 != 0:
+            return CypherResult.fail(
+                text,
+                "Text is not properly encoded into 5 bit values, cannot trust the decoded text.",
+            )
+
+        message = ""
+        for i in range(0, len(joined), 5):
+            section = joined[i : i + 5]
+            # Turn section into binary
+            binary = ""
+            for character in section:
+                if character.isupper():
+                    binary += "1"
+                else:
+                    binary += "0"
+            true_value = int(binary, 2)
+
+            # Deduce letter from binary and make sure to account for collisions
+            possible_keys = []
+            for key in characters.keys():
+                if characters[key] == true_value:
+                    possible_keys.append(key)
+
+            # Add the letter to the output message
+            if len(possible_keys) == 1:
+                message += possible_keys[0]
+            else:
+                message += f"({', '.join(possible_keys)})"
+
+        # Return the final assmbled message
+        return CypherResult.ok(text, message)

@@ -9,9 +9,9 @@ from kryptic_cypher.cypher import register_cypher, Cypher, CypherWithKey
 @register_cypher
 class MyCypher(Cypher):
     def encode(self, text: str) -> str:
-        # Do my encryption here 
+        # Do my encryption here
         return text
-        
+
     def decode(self, text: str) -> str:
         # Do my decryption here
         return text
@@ -20,9 +20,9 @@ class MyCypher(Cypher):
 @register_cypher
 class MyCypherWithKey(CypherWithKey):
     def encode(self, text: str, key: str) -> str:
-        # Do my encryption here 
+        # Do my encryption here
         return text
-        
+
     def decode(self, text: str, key: str) -> str:
         # Do my decryption here
         return text
@@ -33,31 +33,81 @@ You can use this if you want to import and leverage any existing cyphers that ha
 
 from abc import ABC, abstractmethod
 from logging import getLogger
-from typing import IO
-
+from pydantic import BaseModel
 
 logger = getLogger(__name__)
 
 
-class ValidationResult:
-    def __init__(self, success: bool, messages: list[str]) -> None:
-        self.success = success
-        self.messages = messages
+class ValidationResult(BaseModel):
+    success: bool
+    messages: list[str]
 
     @classmethod
     def ok(cls):
-        return cls(True, [])
+        return cls(
+            success=True,
+            messages=[],
+        )
 
     @classmethod
-    def fail(cls, messages: list[str]):
-        return cls(False, messages)
+    def fail(
+        cls,
+        *messages: list[str],
+    ):
+        return cls(
+            False,
+            messages,
+        )
+
+
+class CypherResult(BaseModel):
+    original_text: str | bytes
+    new_text: str | bytes
+    success: bool
+    error: str | None
+
+    @classmethod
+    def ok(
+        cls,
+        original_text: str | bytes,
+        new_text: str | bytes,
+    ):
+        return cls(
+            original_text=original_text,
+            new_text=new_text,
+            success=True,
+            error=None,
+        )
+
+    @classmethod
+    def fail(
+        cls,
+        original_text: str | bytes,
+        error: str,
+    ):
+        return cls(
+            original_text=original_text,
+            new_text="" if isinstance(original_text, str) else b"",
+            success=False,
+            error=error,
+        )
 
 
 class Cypher(ABC):
     """A Cypher that does not require a key to encode/decode."""
 
+    @classmethod
+    def get_name(cls) -> str:  # pragma: no cover
+        """
+        Get the name of the Cypher.
+
+        **Returns**
+        - str: The name of the Cypher
+        """
+        return cls.__name__
+
     @abstractmethod
-    def encode(self, text: str) -> IO:  # pragma: no cover
+    def encode(self, text: str | bytes) -> CypherResult:  # pragma: no cover
         """Encode the given text using the given key.
 
         **Parameters**
@@ -69,7 +119,7 @@ class Cypher(ABC):
         pass
 
     @abstractmethod
-    def decode(self, text: str) -> IO:  # pragma: no cover
+    def decode(self, text: str | bytes) -> CypherResult:  # pragma: no cover
         """Decode the given text using the given key.
 
         **Parameters**
@@ -83,6 +133,16 @@ class Cypher(ABC):
 
 class CypherWithKey(ABC):
     """A Cypher that requires a key to encode/decode."""
+
+    @classmethod
+    def get_name(cls) -> str:  # pragma: no cover
+        """
+        Get the name of the Cypher.
+
+        **Returns**
+        - str: The name of the Cypher
+        """
+        return cls.__name__
 
     @classmethod
     @abstractmethod
@@ -100,7 +160,9 @@ class CypherWithKey(ABC):
         pass
 
     @abstractmethod
-    def encode(self, text: str, key: str) -> IO:  # pragma: no cover
+    def encode(
+        self, text: str | bytes, key: str | bytes
+    ) -> CypherResult:  # pragma: no cover
         """Encode the given text using the given key.
 
         **Parameters**
@@ -113,7 +175,11 @@ class CypherWithKey(ABC):
         pass
 
     @abstractmethod
-    def decode(self, text: str, key: str) -> IO:  #  pragma: no cover
+    def decode(
+        self,
+        text: str | bytes,
+        key: str | bytes,
+    ) -> CypherResult:  #  pragma: no cover
         """Decode the given text using the given key.
 
         **Parameters**
@@ -129,7 +195,7 @@ class CypherWithKey(ABC):
 registered_cyphers: dict[str, Cypher | CypherWithKey] = {}
 
 
-def register_cypher(cypher: type) -> None:
+def register_cypher(cypher: type[Cypher] | type[CypherWithKey]) -> None:
     """Class Decorator to register type as cypher.
     Must Implment Cypher or CypherWithKey and must have a constructor that takes no args.
 
@@ -141,9 +207,12 @@ def register_cypher(cypher: type) -> None:
     """
     if not issubclass(cypher, Cypher) and not issubclass(cypher, CypherWithKey):
         raise ValueError(f"Invalid cypher Class: {cypher}")
-    name = cypher.__name__
+
+    name = cypher.get_name()
+
     if name in registered_cyphers:
         logger.warning(f"Duplicate cypher: {name}")
         return
+
     registered_cyphers[name] = cypher()
     logger.debug(f"Registered cypher: {name}")
