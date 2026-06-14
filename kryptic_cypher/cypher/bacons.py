@@ -35,7 +35,7 @@ characters = {
 def sanitize_message(message: str) -> str:
     new_message = ""
     for letter in message.upper():
-        if letter.isascii():
+        if string.ascii_letters.find(letter) != -1:
             new_message += letter
     return new_message
 
@@ -78,7 +78,7 @@ class BaconsCypher(CypherWithKey):
 
     'Hello World', 'Jared' -> '00111 00100 01010 01010 01101 10100 01101 10000 01010 00011' -> 'jaRED jaRed jArEd jArEd jAReD JaRed jAReD Jared jArEd jarED'
     'Hello World', 'sm' -> '00111 00100 01010 01010 01101 10100 01101 10000 01010 00011' -> 'sm SM Sm sM sm sM sM'
-    'Hello World', 'supercoolkeythatwillbeawesome' -> '00111 00100 01010 01010 01101 10100 01101 10000 01010 00011' -> ''
+    'Hello World', 'supercoolkeythatwillbeawesome' -> '00111 00100 01010 01010 01101 10100 01101 10000 01010 00011' -> 'suPERcoOlkeYtHatWiLlbEAwESoMe suPErCOolkeyThAtwilLB'
     """
 
     @staticmethod
@@ -86,8 +86,10 @@ class BaconsCypher(CypherWithKey):
         return "bacons"
 
     def validate_key(self, key: str) -> ValidationResult:
-        if len(key) < 2:
-            return ValidationResult.fail("Key must be at least 2 characters long")
+        if len([c for c in key if c in string.ascii_letters]) < 2:
+            return ValidationResult.fail(
+                "Key must be at least 2 characters long with proper ascii letters."
+            )
         return ValidationResult.ok()
 
     def encode(self, text: str, key: str) -> str:
@@ -115,6 +117,14 @@ class BaconsCypher(CypherWithKey):
 
                 # Get the character from the key
                 visual = key[key_index]
+                while visual not in string.ascii_letters:
+                    if visual in string.whitespace:
+                        encoded += visual
+                    key_index += 1
+                    if key_index >= len(key):
+                        key_index = 0
+                        encoded += " "
+                    visual = key[key_index]
                 key_index += 1
 
                 # Determine casing
@@ -130,9 +140,10 @@ class BaconsCypher(CypherWithKey):
 
     def decode(self, text: str, key: str) -> str:
         pieces = text.split(" ")
-
         # Check to make sure the text is encoded with the given key
-        if set(key.lower()) != set("".join(pieces).lower()):
+        if set(c for c in key if c in string.ascii_letters) != set(
+            "".join(pieces).lower()
+        ):
             return CypherResult.fail(
                 text,
                 "Text is not encoded with the given key, cannot trust the decoded text.",
