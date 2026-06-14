@@ -8,7 +8,6 @@ from kryptic_cypher.cypher import (
     CypherWithKey,
 )
 
-
 # This is to ensure we have at least two cyphers in the registry
 
 
