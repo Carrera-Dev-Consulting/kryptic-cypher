@@ -92,7 +92,7 @@ class BaconsCypher(CypherWithKey):
             )
         return ValidationResult.ok()
 
-    def encode(self, text: str, key: str) -> str:
+    def encode(self, text: str, key: str) -> CypherResult:
         # Remove unsupported characters
         sanitized = sanitize_message(text)
 
@@ -138,10 +138,10 @@ class BaconsCypher(CypherWithKey):
             encoded,
         )
 
-    def decode(self, text: str, key: str) -> str:
+    def decode(self, text: str, key: str) -> CypherResult:
         pieces = text.split(" ")
         # Check to make sure the text is encoded with the given key
-        if set(c for c in key if c in string.ascii_letters) != set(
+        if set(c.lower() for c in key if c in string.ascii_letters) != set(
             "".join(pieces).lower()
         ):
             return CypherResult.fail(
