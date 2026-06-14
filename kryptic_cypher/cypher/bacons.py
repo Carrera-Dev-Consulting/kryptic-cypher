@@ -132,7 +132,7 @@ class BaconsCypher(CypherWithKey):
         pieces = text.split(" ")
 
         # Check to make sure the text is encoded with the given key
-        if any(piece.lower() != key.lower() for piece in pieces):
+        if set(key.lower()) != set("".join(pieces).lower()):
             return CypherResult.fail(
                 text,
                 "Text is not encoded with the given key, cannot trust the decoded text.",

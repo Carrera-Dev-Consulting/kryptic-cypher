@@ -55,8 +55,8 @@ class ValidationResult(BaseModel):
         *messages: list[str],
     ):
         return cls(
-            False,
-            messages,
+            success=False,
+            messages=list(messages),
         )
 
 
