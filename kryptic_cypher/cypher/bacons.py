@@ -86,6 +86,9 @@ class BaconsCypher(CypherWithKey):
         return __name__.split(".")[-1]
 
     def validate_key(self, key: str) -> ValidationResult:
+        if key is None or len(key) == 0:
+            return ValidationResult.fail("Key cannot be empty.")
+
         if len([c for c in key if c in string.ascii_letters]) < 2:
             return ValidationResult.fail(
                 "Key must be at least 2 characters long with proper ascii letters."
