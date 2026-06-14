@@ -83,7 +83,7 @@ class BaconsCypher(CypherWithKey):
 
     @staticmethod
     def get_name() -> str:
-        return "bacons"
+        return __name__.split(".")[-1]
 
     def validate_key(self, key: str) -> ValidationResult:
         if len([c for c in key if c in string.ascii_letters]) < 2:
