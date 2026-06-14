@@ -35,59 +35,75 @@ async def ping(interaction: discord.Interaction):
     await interaction.response.send_message("🏓 Pong!")
 
 
+class EncodeModal(discord.ui.Modal, title="Encode Message"):
+    message = discord.ui.TextInput(
+        label="Message",
+        placeholder="Message to encode",
+        required=True,
+    )
+    key = discord.ui.TextInput(label="Key", placeholder="Key to use", required=False)
+    cypher = discord.ui.TextInput(
+        label="Cypher",
+        placeholder="Cypher to use",
+        required=True,
+    )
+
+    def __init__(self):
+        super().__init__()
+
+    async def on_submit(self, interaction: discord.Interaction):
+        cypher = self.cypher.value
+        message = self.message.value
+        key = self.key.value
+
+        if cypher not in registered_cyphers:
+            await interaction.response.send_message(
+                f"Cypher is unsupported currently... {cypher} please use {', '.join(registered_cyphers.keys())}",
+                ephemeral=True,
+            )
+            return
+
+        cypher_instance = registered_cyphers[cypher]
+        if isinstance(cypher_instance, CypherWithKey):
+            if not key:
+                await interaction.response.send_message(
+                    "You must specify a key for this cypher",
+                    ephemeral=True,
+                )
+                return
+            key_validation = cypher_instance.validate_key(key)
+            if not key_validation.success:
+                await interaction.response.send_message(
+                    "\n".join(key_validation.messages),
+                    ephemeral=True,
+                )
+                return
+            response = cypher_instance.encode(message, key)
+        elif isinstance(cypher_instance, Cypher):
+            response = cypher_instance.encode(message)
+        else:
+            await interaction.response.send_message(
+                f"Cypher is unsupported currently... {cypher}",
+                ephemeral=True,
+            )
+            return
+        if not response.success:
+            await interaction.response.send_message(
+                f"Failed to encode message: {response.error}",
+                ephemeral=True,
+            )
+        else:
+            await interaction.response.send_message(response.new_text)
+
+
 @bot.tree.command(
     name="encode",
     description="Writes a message to the discord channel encoded by the specified cypher",
 )
-@app_commands.describe(
-    cypher="The specific cypher to use for encoding",
-    message="The message to encode",
-    key="The key to use for encoding",
-)
-@app_commands.choices(
-    cypher=[
-        app_commands.Choice(
-            name=cypher,
-            value=cypher,
-        )
-        for cypher in registered_cyphers.keys()
-    ]
-)
 async def encode(
     interaction: discord.Interaction,
-    cypher: str,
-    message: str,
-    key: str = None,
 ):
-    cypher_instance = registered_cyphers[cypher]
-    if isinstance(cypher_instance, CypherWithKey):
-        if not key:
-            await interaction.response.send_message(
-                "You must specify a key for this cypher",
-                ephemeral=True,
-            )
-        key_validation = cypher_instance.validate_key(key)
-        if not key_validation.success:
-            await interaction.response.send_message(
-                "\n".join(key_validation.messages),
-                ephemeral=True,
-            )
-        response = cypher_instance.encode(message, key)
-    elif isinstance(cypher_instance, Cypher):
-        response = cypher_instance.encode(message)
-    else:
-        await interaction.response.send_message(
-            f"Cypher is unsupported currently... {cypher}",
-            ephemeral=True,
-        )
-        return
-    if not response.success:
-        await interaction.response.send_message(
-            f"Failed to encode message: {response.error}",
-            ephemeral=True,
-        )
-    else:
-        await interaction.response.send_message(response.new_text)
+    await interaction.response.send_modal(EncodeModal())
 
 
 @bot.tree.command(
