@@ -6,11 +6,12 @@
 |--------------------------------------- | -------: | -------: | ------: | --------: |
 | kryptic\_cypher/\_\_init\_\_.py        |        0 |        0 |    100% |           |
 | kryptic\_cypher/\_\_main\_\_.py        |        0 |        0 |    100% |           |
-| kryptic\_cypher/app.py                 |       96 |       19 |     80% |26-28, 35, 45-47, 93, 98, 104, 107, 117, 127-130, 171-172, 219-220 |
-| kryptic\_cypher/cypher/\_\_init\_\_.py |        1 |        0 |    100% |           |
-| kryptic\_cypher/cypher/bacons.py       |       67 |        4 |     94% |101, 125-126, 182 |
+| kryptic\_cypher/app.py                 |       79 |       17 |     78% |43, 48, 54, 57, 67, 77-80, 121-122, 169-170, 193-197 |
+| kryptic\_cypher/bot.py                 |       90 |       62 |     31% |23-29, 35, 52, 55-96, 106, 137-188, 196-199, 203 |
+| kryptic\_cypher/cypher/\_\_init\_\_.py |       34 |        6 |     82% |54-56, 63, 73-75 |
+| kryptic\_cypher/cypher/bacons.py       |       69 |        5 |     93% |90, 104, 128-129, 185 |
 | kryptic\_cypher/cypher/base.py         |       30 |        0 |    100% |           |
-| **TOTAL**                              |  **194** |   **23** | **88%** |           |
+| **TOTAL**                              |  **302** |   **90** | **70%** |           |
 
 
 ## Setup coverage badge
