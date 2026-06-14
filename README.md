@@ -2,13 +2,15 @@
 
 [Full report](https://htmlpreview.github.io/?https://github.com/Carrera-Dev-Consulting/kryptic-cypher/blob/python-coverage-comment-action-data/htmlcov/index.html)
 
-| Name                            |    Stmts |     Miss |   Cover |   Missing |
-|-------------------------------- | -------: | -------: | ------: | --------: |
-| kryptic\_cypher/\_\_init\_\_.py |        0 |        0 |    100% |           |
-| kryptic\_cypher/\_\_main\_\_.py |        0 |        0 |    100% |           |
-| kryptic\_cypher/app.py          |       64 |       10 |     84% |42, 47, 50, 62-64, 108-109, 157-158 |
-| kryptic\_cypher/cypher.py       |       26 |        3 |     88% |53, 146-147 |
-|                       **TOTAL** |   **90** |   **13** | **86%** |           |
+| Name                                   |    Stmts |     Miss |   Cover |   Missing |
+|--------------------------------------- | -------: | -------: | ------: | --------: |
+| kryptic\_cypher/\_\_init\_\_.py        |        0 |        0 |    100% |           |
+| kryptic\_cypher/\_\_main\_\_.py        |        0 |        0 |    100% |           |
+| kryptic\_cypher/app.py                 |       96 |       19 |     80% |26-28, 35, 45-47, 93, 98, 104, 107, 117, 127-130, 171-172, 219-220 |
+| kryptic\_cypher/cypher/\_\_init\_\_.py |        1 |        0 |    100% |           |
+| kryptic\_cypher/cypher/bacons.py       |       67 |        4 |     94% |101, 125-126, 182 |
+| kryptic\_cypher/cypher/base.py         |       30 |        0 |    100% |           |
+| **TOTAL**                              |  **194** |   **23** | **88%** |           |
 
 
 ## Setup coverage badge
