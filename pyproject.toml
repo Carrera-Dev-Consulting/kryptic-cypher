@@ -30,9 +30,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 
-keywords = ["encyrption", "cli",]
+keywords = ["encyrption", "cli"]
 
-dependencies = ["pydantic>=2.9.2", "click>=8.1.7"]
+dependencies = ["pydantic>=2.9.2", "click>=8.1.7", "pydantic-settings>=2.14.1"]
 
 [project.urls]
 Homepage = "https://github.com/carrera-dev-consulting/kryptic-cypher"
@@ -43,6 +43,11 @@ Changelog = "https://github.com/carrera-dev-consulting/kryptic-cypher/releases"
 
 [project.scripts]
 kryptic-cypher = "kryptic_cypher.app:main"
+
+[project.optional-dependencies]
+discord = ["discord.py>=2.7.1"]
+dev = ["black>=26.5.1", "pdoc>=16.0.0"]
+tests = ["pytest", "pytest-cov", "pytest-mock", "pytest-html"]
 
 [tool.pdm]
 version = { source = "scm", tag_regex = "^(\\d+\\.){2}\\d+$", fallback_version = "0.0.0" }

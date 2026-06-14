@@ -6,57 +6,11 @@ This is currently only for encoding and decoding data using the encode and decod
 
 import base64
 from io import BytesIO
+from logging import basicConfig
+import os
 import click
 from kryptic_cypher.cypher.base import CypherResult
-from .cypher import Cypher, CypherWithKey, registered_cyphers, register_cypher
-
-import importlib
-import inspect
-import pkgutil
-from typing import Type
-
-
-def find_subclasses_recursively(package_name: str, base_class: Type) -> list[Type]:
-    """Recursively walks a package to find all classes implementing base_class."""
-    found_classes = []
-
-    try:
-        # 1. Load the root package
-        root_package = importlib.import_module(package_name)
-    except ImportError:
-        print(f"Error: Root package '{package_name}' could not be imported.")
-        return found_classes
-
-    # 2. Check the root package file itself for classes
-    _extract_classes_from_module(root_package, base_class, found_classes)
-
-    # 3. Guard against single-file modules that have no sub-packages
-    if not hasattr(root_package, "__path__"):
-        return found_classes
-
-    # 4. Recursively walk through all submodules and sub-packages
-    for module_info in pkgutil.walk_packages(
-        root_package.__path__, root_package.__name__ + "."
-    ):
-        try:
-            # Dynamically import each discovered submodule
-            submodule = importlib.import_module(module_info.name)
-            _extract_classes_from_module(submodule, base_class, found_classes)
-        except ImportError:
-            # Skip submodules that fail to import due to missing dependencies
-            continue
-
-    return found_classes
-
-
-def _extract_classes_from_module(module, base_class: Type, target_list: list[Type]):
-    """Helper to find matching classes inside a specific module instance."""
-    for name, obj in inspect.getmembers(module, inspect.isclass):
-        # Ensure it is a subclass, isn't the base itself, and was defined in this module
-        if issubclass(obj, base_class) and obj is not base_class:
-            if obj.__module__ == module.__name__:
-                if obj not in target_list:
-                    target_list.append(obj)
+from .cypher import Cypher, CypherWithKey, register_all_cyphers, registered_cyphers
 
 
 @click.group()
@@ -75,12 +29,8 @@ def main(ctx: click.Context):
         pass
     ```
     """
-    all_to_register = find_subclasses_recursively(
-        "kryptic_cypher.cypher", Cypher
-    ) + find_subclasses_recursively("kryptic_cypher.cypher", CypherWithKey)
-
-    for cypher in all_to_register:
-        register_cypher(cypher)
+    basicConfig(level=os.environ.get("LOG_LEVEL", "INFO").upper())
+    register_all_cyphers()
 
 
 def resolve_cypher(
@@ -225,3 +175,23 @@ def decode(
         encoded_text = cypher_instance.decode(text)
 
     process_output(output, encoded_text)
+
+
+try:
+    from kryptic_cypher.bot import run
+
+    @main.command("bot")
+    @click.option(
+        "--env-file",
+        type=click.Path(
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+        ),
+    )
+    def run_bot(env_file: str = None):
+        click.echo("Executing Discord Bot...")
+        run(env_file=env_file)
+
+except ImportError:
+    pass
