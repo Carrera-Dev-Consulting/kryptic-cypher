@@ -142,7 +142,8 @@ class CypherWithKey(ABC):
         **Returns**
         - str: The name of the Cypher
         """
-        return cls.__name__
+        # Get the name of the module the cypher is defined in... pattern will be class defined once in a a single module.
+        return cls.__module__.split(".")[-1]
 
     @classmethod
     @abstractmethod
