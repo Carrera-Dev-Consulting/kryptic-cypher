@@ -11,7 +11,8 @@
 | kryptic\_cypher/cypher/\_\_init\_\_.py |       34 |        6 |     82% |54-56, 63, 73-75 |
 | kryptic\_cypher/cypher/bacons.py       |       69 |        5 |     93% |90, 104, 128-129, 185 |
 | kryptic\_cypher/cypher/base.py         |       30 |        0 |    100% |           |
-| **TOTAL**                              |  **302** |   **90** | **70%** |           |
+| kryptic\_cypher/cypher/ceasar.py       |       53 |        3 |     94% |93-94, 113 |
+| **TOTAL**                              |  **355** |   **93** | **74%** |           |
 
 
 ## Setup coverage badge
