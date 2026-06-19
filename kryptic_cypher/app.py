@@ -177,6 +177,14 @@ def decode(
     process_output(output, encoded_text)
 
 
+@main.command("list")
+def list_cyphers():
+    for cypher in sorted(registered_cyphers.keys()):
+        click.echo(
+            f"{cypher}: {"keyless" if isinstance(registered_cyphers[cypher], Cypher) else "keyed"}"
+        )
+
+
 try:
     from kryptic_cypher.bot import run
 
