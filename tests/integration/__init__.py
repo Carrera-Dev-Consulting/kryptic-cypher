@@ -11,6 +11,10 @@ from kryptic_cypher.cypher import (
 
 @register_cypher
 class TestCypherNoKey(Cypher):
+    @classmethod
+    def get_name(cls) -> str:
+        return cls.__name__
+
     def encode(self, text: str) -> CypherResult:
         return CypherResult.ok(text, text)
 
@@ -20,6 +24,11 @@ class TestCypherNoKey(Cypher):
 
 @register_cypher
 class TestCypherWithKey(CypherWithKey):
+
+    @classmethod
+    def get_name(cls) -> str:
+        return cls.__name__
+
     def validate_key(self, key: str) -> ValidationResult:
         return ValidationResult.ok()
 

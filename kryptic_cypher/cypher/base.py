@@ -104,7 +104,7 @@ class Cypher(ABC):
         **Returns**
         - str: The name of the Cypher
         """
-        return cls.__name__
+        return cls.__module__.split(".")[-1]
 
     @abstractmethod
     def encode(self, text: str | bytes) -> CypherResult:  # pragma: no cover
@@ -142,8 +142,7 @@ class CypherWithKey(ABC):
         **Returns**
         - str: The name of the Cypher
         """
-        # Use the class name for consistency with Cypher.get_name
-        return cls.__name__
+        return cls.__module__.split(".")[-1]
 
     @classmethod
     @abstractmethod

@@ -28,6 +28,10 @@ def test_register_cypher__when_registering_non_cypher_class__raises_value_error(
 
 def test_register_cypher__when_registering_cypher__adds_cypher_to_registery():
     class MyCypher(Cypher):
+        @classmethod
+        def get_name(cls) -> str:
+            return "MyCypher"
+
         def encode(self, text: str) -> IO:
             return StringIO(text)
 
