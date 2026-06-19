@@ -142,6 +142,7 @@ class CypherWithKey(ABC):
         **Returns**
         - str: The name of the Cypher
         """
+        # Use the class name for consistency with Cypher.get_name
         return cls.__name__
 
     @classmethod
