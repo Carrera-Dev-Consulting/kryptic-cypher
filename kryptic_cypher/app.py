@@ -209,7 +209,7 @@ def decode(
 def list_cyphers():
     for cypher in sorted(registered_cyphers.keys()):
         click.echo(
-            f"{cypher}: {"keyless" if isinstance(registered_cyphers[cypher], Cypher) else "keyed"}"
+            f"{cypher}: {'keyless' if isinstance(registered_cyphers[cypher], Cypher) else 'keyed'}"
         )
 
 
