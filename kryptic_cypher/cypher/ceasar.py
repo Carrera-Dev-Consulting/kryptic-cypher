@@ -2,26 +2,27 @@
 
 from .base import CypherResult, CypherWithKey, ValidationResult
 
+UPPER_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+LOWER_ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+
 
 def create_alpahbet(key: int):
-    upper_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    lower_alphabet = "abcdefghijklmnopqrstuvwxyz"
     translation_dictionary = {}
     for cypher_index, original_index in zip(
-        range(key, key + len(upper_alphabet)),
-        range(len(upper_alphabet)),
+        range(key, key + len(UPPER_ALPHABET)),
+        range(len(UPPER_ALPHABET)),
     ):
-        cypher_index_character = cypher_index % len(upper_alphabet)
-        translation_dictionary[upper_alphabet[original_index]] = upper_alphabet[
+        cypher_index_character = cypher_index % len(UPPER_ALPHABET)
+        translation_dictionary[UPPER_ALPHABET[original_index]] = UPPER_ALPHABET[
             cypher_index_character
         ]
 
     for cypher_index, original_index in zip(
-        range(key, key + len(lower_alphabet)),
-        range(len(lower_alphabet)),
+        range(key, key + len(LOWER_ALPHABET)),
+        range(len(LOWER_ALPHABET)),
     ):
-        cypher_index_character = cypher_index % len(lower_alphabet)
-        translation_dictionary[lower_alphabet[original_index]] = lower_alphabet[
+        cypher_index_character = cypher_index % len(LOWER_ALPHABET)
+        translation_dictionary[LOWER_ALPHABET[original_index]] = LOWER_ALPHABET[
             cypher_index_character
         ]
 
