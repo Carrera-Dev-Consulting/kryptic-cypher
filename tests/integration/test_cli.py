@@ -186,3 +186,37 @@ def test_cli_decode__when_input_with_cypher_with_key_and_output_file_provided__w
         assert result.exit_code == 0
         with open(os.path.join(tempdir, "output.txt")) as f:
             assert f.read() == output
+
+
+def test_cli_list__prints_registered_cyphers(runner: CliRunner):
+    result = run_game_with_input(runner, ["list"])
+
+    assert result.exit_code == 0
+    assert "TestCypherNoKey: keyless" in result.output
+    assert "TestCypherWithKey: keyed" in result.output
+    assert result.output.index("TestCypherNoKey") < result.output.index("TestCypherWithKey")
+
+
+def test_cli_cypher__when_text_is_provided__encodes_with_cypher(runner: CliRunner):
+    result = run_game_with_input(
+        runner,
+        ["cypher", "TestCypherNoKey", "encode", "hello world"],
+    )
+
+    assert result.exit_code == 0
+    assert "hello world" in result.output
+
+
+def test_cli_cypher__when_text_is_a_file__decodes_with_cypher(runner: CliRunner):
+    with TemporaryDirectory() as tempdir:
+        text_file = os.path.join(tempdir, "input.txt")
+        with open(text_file, "w") as f:
+            f.write("hello world")
+
+        result = run_game_with_input(
+            runner,
+            ["cypher", "TestCypherWithKey", "decode", text_file, "--key", "key"],
+        )
+
+    assert result.exit_code == 0
+    assert "hello worldkey" in result.output
