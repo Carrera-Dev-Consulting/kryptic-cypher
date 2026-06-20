@@ -80,6 +80,39 @@ def process_output(
             click.echo(binary_string)
 
 
+def _run_cypher(
+    action: str,
+    cypher: str,
+    text: str,
+    input: str,
+    key: str,
+    output: str | None,
+    binary: bool,
+):
+    """Shared runner for encode/decode click commands.
+
+    action must be either 'encode' or 'decode'.
+    """
+    action = action.lower()
+    if action not in ("encode", "decode"):
+        raise click.ClickException("action must be 'encode' or 'decode'")
+
+    cypher_instance = resolve_cypher(cypher, text, input, key)
+
+    if input:
+        with open(input, "rb" if binary else "r") as f:
+            text = f.read()
+
+    # Resolve the bound method (`encode` or `decode`) and call it.
+    method = getattr(cypher_instance, action)
+    if isinstance(cypher_instance, CypherWithKey):
+        result = method(text, key)
+    else:
+        result = method(text)
+
+    process_output(output, result)
+
+
 @main.command("encode")
 @click.option(
     "-c",
@@ -115,18 +148,15 @@ def encode(
     """
     CLI command to encode text using a cypher in our system that will check to make sure the usage is valid i.e. input is given and key is valid if key is required.
     """
-    cypher_instance = resolve_cypher(cypher, text, input, key)
-
-    if input:
-        with open(input, "rb" if binary else "r") as f:
-            text = f.read()
-
-    if isinstance(cypher_instance, CypherWithKey):
-        result = cypher_instance.encode(text, key)
-    else:
-        result = cypher_instance.encode(text)
-
-    process_output(output, result)
+    _run_cypher(
+        "encode",
+        cypher=cypher,
+        text=text,
+        input=input,
+        key=key,
+        output=output,
+        binary=binary,
+    )
 
 
 @main.command("decode")
@@ -164,17 +194,15 @@ def decode(
     """
     CLI command to decode text using a cypher in our system that will check to make sure the usage is valid i.e. input is given and key is valid if key is required.
     """
-    cypher_instance = resolve_cypher(cypher, text, input, key)
-    if input:
-        with open(input, "rb" if binary else "r") as f:
-            text = f.read()
-
-    if isinstance(cypher_instance, CypherWithKey):
-        encoded_text = cypher_instance.decode(text, key)
-    else:
-        encoded_text = cypher_instance.decode(text)
-
-    process_output(output, encoded_text)
+    _run_cypher(
+        "decode",
+        cypher=cypher,
+        text=text,
+        input=input,
+        key=key,
+        output=output,
+        binary=binary,
+    )
 
 
 @main.command("list")
@@ -183,6 +211,43 @@ def list_cyphers():
         click.echo(
             f"{cypher}: {"keyless" if isinstance(registered_cyphers[cypher], Cypher) else "keyed"}"
         )
+
+
+@main.command("cypher")
+@click.argument("cypher")
+@click.argument("action", type=click.Choice(["encode", "decode"]))
+@click.argument("text")
+@click.option(
+    "-k",
+    "--key",
+    help="The key to use for the cypher",
+    required=False,
+)
+@click.option(
+    "--binary",
+    "-b",
+    is_flag=True,
+    help="Whether or not input is binary...",
+)
+@click.option(
+    "-o",
+    "--output",
+    help="The output file to write text to",
+    required=False,
+    default=None,
+)
+def cypher(
+    cypher: str,
+    action: str,
+    text: str,
+    key: str,
+    binary: bool,
+    output: str | None,
+):
+    if os.path.exists(text):
+        _run_cypher(action, cypher, None, text, key, output, binary)
+    else:
+        _run_cypher(action, cypher, text, None, key, output, binary)
 
 
 try:
