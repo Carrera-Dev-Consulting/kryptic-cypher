@@ -194,7 +194,9 @@ def test_cli_list__prints_registered_cyphers(runner: CliRunner):
     assert result.exit_code == 0
     assert "TestCypherNoKey: keyless" in result.output
     assert "TestCypherWithKey: keyed" in result.output
-    assert result.output.index("TestCypherNoKey") < result.output.index("TestCypherWithKey")
+    assert result.output.index("TestCypherNoKey") < result.output.index(
+        "TestCypherWithKey"
+    )
 
 
 def test_cli_cypher__when_text_is_provided__encodes_with_cypher(runner: CliRunner):
